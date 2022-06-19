@@ -1,0 +1,260 @@
+---
+title: "Compléments"
+output:
+  html_document:
+    df_print: paged
+---
+
+## 1 - Variables et types
+
+Créer un nombre entier
+
+```{r}
+(mon_entier <- 16L)
+class(mon_entier)
+```
+
+Ajouter un booléen à un entier
+
+```{r}
+(mon_booleen  <- TRUE)
+mon_booleen + TRUE 
+mon_nombre + mon_booleen
+```
+
+Autre notation de puissance
+
+```{r}
+mon_entier ** 5
+mon_entier ^ 5
+```
+
+Affichage implicite de mon_texte
+
+```{r}
+mon_texte <- "bonjour"
+mon_texte
+```
+
+Affichage explicite avec `print()`
+
+```{r}
+print(mon_texte)
+print(mon_booleen)
+```
+
+Affichage explicite de mon_texte avec `cat()`
+
+```{r}
+cat(mon_texte)
+cat(mon_booleen)
+cat("\n")
+cat(mon_texte, mon_booleen,"\n")
+```
+
+Concaténer deux chaînes
+
+L'opérateur `+` ne fonctionne pas pour les chaînes
+
+```{r}
+mon_texte + " R" 
+```
+
+```{r}
+paste(mon_texte, "R")
+paste("mon_nombre =", mon_nombre)
+paste("mon_nombre", mon_nombre, sep = " = ")
+paste("mon_nombre = ", mon_nombre, sep = "")
+paste0("mon_nombre = ", mon_nombre)
+```
+
+Simple ou double quote
+
+```{r}
+# quote double
+(a <- "Microsoft R version 3.4.1.0") 
+class(a)
+
+# quote s simple
+(b <- 'Microsoft R version 3.4.1.0') 
+class(b)
+
+# a et b sont équivalents
+identical(a, b)
+```
+
+Cas de chaîne de caractère contenant `'`
+
+```{r}
+char0 <- "Demain dès l'aube"
+print(char0)
+cat(char0, "\n")
+char1 <- 'Demain dès l\'aube'
+print(char1)
+cat(char1)
+```
+
+Cas de chaîne de caractère contenant `"`
+
+```{r}
+char2 <- 'le terme "casting" veut dire coercition'
+print(char2)
+cat(char2, "\n")
+# ou
+char3 <- "le terme \"casting\" veut dire coercition"
+print(char3)
+cat(char3)
+```
+
+Caractères spéciaux
+
+```{r}
+char_tab <- "Langage \tR"
+print(char_tab)
+cat(char_tab, "\n")
+
+char_rchar <- "Langage \rR"
+print(char_rchar)
+cat(char_rchar, "\n")
+
+char_nligne <- "Langage \nR"
+print(char_nligne)
+cat(char_nligne, "\n")
+```
+
+## 2 - Formats
+
+### A - Vecteurs
+
+Tester si c'est un vecteur
+
+```{r}
+pourboires <- c(30, 5, -15, 0, 12)
+is.vector(pourboires)
+```
+
+Casting automatique
+
+```{r}
+(xyz <- c(32,"a",36,58,69))
+is.vector(xyz)
+class(xyz)
+c(T,36,"M",25)
+```
+
+Longueur d'un vecteur
+
+```{r}
+x <- c(100,103,103,101,99,104,105,104,95,96)
+(n <- length(x))
+```
+
+Modifier la longueur d'un vecteur
+
+```{r}
+length(x) <-  n - 1
+length(x)
+x
+(x2 <- x[1:3])
+```
+
+Concaténer ou combiner des vecteurs
+
+```{r}
+x <- c(x,c(58, 65, 35, 88, 102, 100))
+length(x)
+x
+```
+
+Recyclage
+
+```{r}
+(z <- c(1, 2, 3, 4, 5))
+(y <- c(1, 2, 3, 4))
+(x <- c(-1, -2))
+ #  length(z) est un multiple de length(x)
+x + y
+ #  length(z) n'est pas un multiple de length(x)
+x + z
+```
+
+Préférer l'utilisation de `rep()`
+
+```{r}
+rep( x, times = 2)
+rep( x, times = 2) + y
+rep( x, length.out = 5)
+rep( x, length.out = 5) + z
+rep( x, each = 2)
+```
+
+### C - Data frames
+
+Depuis la version 4, la valeur par défaut est \`stringsAsFactors = FALSE\`
+
+```{r}
+?read.csv
+```
+
+Aperçu des 6 premières lignes
+
+```{r}
+head(iris)
+```
+
+Aperçu des 6 dernières lignes
+
+```{r}
+tail(iris)
+```
+
+Il est possible de spécifier le nombre de lignes à afficher
+
+```{r}
+head(iris, 10) # 10 premières lignes 
+tail(iris, 10) # 10 dernières lignes
+```
+
+Visualiser un `data.frame` dans une fenêtre de tableur
+
+```{r}
+View(iris)
+View(iris,
+     title = " Data frame IRIS ")
+View(head(iris, 10),
+     title = " les dix premières lignes ")
+View(tail(iris, 10),
+     title = " les dix dernières lignes ")
+```
+
+Dimensions d'un `data.frame`
+
+```{r}
+# renvoie d'abord le nombre d'individus 
+# puis le nombre de variables
+dim(iris)
+
+# le nombre de lignes ou d'individus
+nrow(iris) 
+NROW(iris)
+dim(iris)[1]
+
+# le nombre de variables ou colonnes ou de vecteurs
+ncol(iris) 
+NCOL(iris)
+dim(iris)[2]
+```
+
+## 3 - Les conditions
+
+La condition est vectorisée
+
+```{r}
+(sup5 <- iris$Sepal.Length > 5)
+```
+
+Elle peut être utilisée pour sélectionner les lignes d'un `data.frame`
+
+```{r}
+head( iris[sup5, ] )
+```
