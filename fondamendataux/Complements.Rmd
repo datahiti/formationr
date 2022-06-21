@@ -245,8 +245,6 @@ NCOL(iris)
 dim(iris)[2]
 ```
 
-## 3 - Les conditions
-
 La condition est vectorisée
 
 ```{r}
@@ -258,3 +256,63 @@ Elle peut être utilisée pour sélectionner les lignes d'un `data.frame`
 ```{r}
 head( iris[sup5, ] )
 ```
+
+Tables de correspondance avec un vecteur nommé
+```{r}
+SeriesLUT <- c("Iris ser. Tripetalae", "Iris ser. Laevigatae", "Iris ser. Laevigatae")
+setNames(SeriesLUT, c("setosa", "versicolor", "virginica" ))
+SeriesLUT[iris$Species]
+```
+
+Tables de correspondance avec un data.frame
+```{r}
+SeriesLUTdf <- data.frame(
+  Species = c("Iris ser. Tripetalae", "Iris ser. Laevigatae", "Iris ser. Laevigatae"),
+  Series = c("setosa", "versicolor", "virginica" ))
+merge(iris, SeriesLUT)
+```
+
+
+## 3 - Les conditions
+```{r}
+pourboires <- c(30, 5, -15, 0, 12)
+  
+achats <- c(0, 10, 5, 0, 8)
+  
+jours <- c("lundi", "mardi", "mercredi", "jeudi", "vendredi")
+
+names(pourboires) <- jours
+names(achats) <- jours
+```
+Le `if` n'est pas vectorisé, il ne teste qu'une condition
+```{r}
+if(pourboires < 0) {
+  print("Erreur")
+} else 
+  print("OK")
+```
+
+On peut agréger les conditions avec `all()` et `any()`
+```{r}
+if(any(pourboires < 0)) {
+  print("Erreur")
+} else 
+  print("OK")
+
+if(all(pourboires >= 0)) {
+  print("OK")
+} else 
+  print("Erreur")
+```
+
+La fonction `ifelse()` est vectorisée
+```{r}
+print(
+  ifelse(
+    pourboires < 0, 
+    "Erreur", 
+    "OK"))
+
+```
+
+##
