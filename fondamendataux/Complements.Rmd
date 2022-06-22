@@ -267,9 +267,9 @@ SeriesLUT[iris$Species]
 Tables de correspondance avec un data.frame
 ```{r}
 SeriesLUTdf <- data.frame(
-  Species = c("Iris ser. Tripetalae", "Iris ser. Laevigatae", "Iris ser. Laevigatae"),
-  Series = c("setosa", "versicolor", "virginica" ))
-merge(iris, SeriesLUT)
+  Series = c("Iris ser. Tripetalae", "Iris ser. Laevigatae", "Iris ser. Laevigatae"),
+  Species = c("setosa", "versicolor", "virginica" ))
+merge(iris, SeriesLUTdf)
 ```
 
 
@@ -315,4 +315,9 @@ print(
 
 ```
 
-##
+## 6 - CSV
+la fonction `which()` transforme un vecteur de `logical` en un vecteur qui contient uniquement les indices des valeurs `TRUE`de ce vecteur.
+```{r}
+which(c(TRUE, FALSE, TRUE))
+```
+
