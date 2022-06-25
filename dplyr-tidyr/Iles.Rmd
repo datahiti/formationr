@@ -1,0 +1,53 @@
+---
+title: "Les îles"
+author: "Hubert LEVIEL"
+date: "16/06/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(sf)
+library(ggplot2)
+library(dplyr)
+```
+
+## Récupération des données
+les shape files ont été téléchargés depuis la plateforme data.gouv.fr : https://static.data.gouv.fr/resources/limites-geographiques-administratives/20220610-202135/shapefiles.zip
+
+le dossier comporessé a été décompressé
+
+## Lecture des données
+```{r}
+ile <- sf::st_read("C:/Users/hlevi/Downloads/shapefiles/Ile.shp")
+summary(ile)
+unique(ile$Sub)
+```
+
+## PLot avec ggplot
+
+```{r }
+ile %>% ggplot() +
+  geom_sf()+ 
+  ggtitle("Les îles de la Polynésie française") + 
+  coord_sf()
+```
+
+## Les îles du vent
+
+```{r }
+ile %>% filter( Sub == "Iles Du Vent") %>%
+  ggplot() +
+  geom_sf(fill = "darkgreen")+ 
+  ggtitle("Les îles du vent") 
+```
+
+## Les principales îles sous le vent
+
+```{r }
+ile %>% filter( Sub == "Iles Sous-Le-Vent" & Indivds > 5000) %>%
+  ggplot() +
+  geom_sf(aes(fill = Indivds) ) + 
+  geom_sf_label(aes( label = Ile), nudge_y = -0.07, nudge_x = 0.06)+ 
+  ggtitle("Les îles sous le vent de plus de 5000 habitants") 
+```

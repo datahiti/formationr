@@ -1,0 +1,316 @@
+---
+title: "Exercices"
+author: "Hubert LEVIEL"
+date: "20/06/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## 1 - Variables et types
+
+Créer une variable numérique x valant 30.25
+
+```{r}
+(x <- 30.25)
+```
+
+Quel est le type de x
+
+```{r}
+class(x)
+```
+
+Créer une variable entiere y valant 30L
+
+```{r}
+(y <- 30L)
+```
+
+Sommer x et y
+
+```{r}
+x + y
+```
+
+Créer une variable z en transformant x en entier
+
+```{r}
+(z <- as.integer(x))
+```
+
+Créer la variable i qui contient la somme de z et y
+
+```{r}
+(i <- z + y)
+```
+
+Vérifier que i est de type integer
+
+```{r}
+is.integer(i)
+```
+
+## 2- Formats
+
+### Vecteurs
+
+Créer un vecteur v contenant les nombre 1 à 10
+
+```{r}
+(v <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+(v <- 1:10)
+```
+
+Calculer le vecteur v2 contenant les carrés des nombres 1 à 10
+
+```{r}
+(v2 <- v ^ 2)
+(v2 <- v ** 2)
+(v2 <- v  * v)
+```
+
+Créer un vecteur w valant 2 fois v
+
+```{r}
+(w <- v + v)
+```
+
+Soustraire w à v2
+
+```{r}
+(v2 - w)
+```
+
+Retrouver ce résultat en n'utilisant que v
+
+```{r}
+v * ( v - 2 )
+```
+
+Calculer la somme des 10 premiers entiers
+
+```{r}
+sum( v )
+```
+
+Calculer la somme des carrés des 10 premiers entiers
+
+```{r}
+sum( v2 )
+```
+
+Calculer la racive carrée de v2
+
+```{r}
+(v1 <- sqrt( v2 ))
+```
+
+Vérifier qu'elle vaut v
+
+```{r}
+(sqrt( v2 ) == v)
+(all( sqrt( v2 ) == v))
+identical( sqrt( v2 ), v)
+```
+
+### Data frames
+
+Afficher les 6 premières lignes de `iris`
+
+```{r}
+head(iris)
+iris[1:6,]
+```
+
+Afficher la toute première ligne de `iris`
+
+```{r}
+head(iris, n = 1)
+iris[1,]
+```
+
+Afficher les 6 premières valeurs de la première colonne de `iris`
+
+```{r}
+head(iris[, 1])
+iris[1:6, 1]
+```
+
+Afficher les 6 premières valeurs de la colonne `Petal.Length`
+
+```{r}
+head( iris$Petal.Length )
+head( iris$Petal.Length )
+iris[1:6,"Petal.Length"] 
+```
+
+Calculer la longueur maximale d'une pétale dans `iris`
+
+```{r}
+max( iris$Petal.Length )
+```
+
+Afficher les 6 premières lignes de `iris` pour l'espèce `versicolor`
+
+```{r}
+head( iris[ iris$Species == "versicolor",c("Petal.Length","Sepal.Length")])
+head(subset(iris, Species == "versicolor",c("Petal.Length","Sepal.Length") ))
+```
+
+Afficher la (ou les) ligne pour laquelle la longueur de pétale est la plus longue
+
+```{r}
+iris[iris$Petal.Length == max(iris$Petal.Length),]
+```
+
+Nombre d'individus ayant une pétale plus courte que la moyenne
+
+```{r}
+sum( iris$Petal.Length < mean(iris$Petal.Length) )
+nrow(iris[iris$Petal.Length < mean(iris$Petal.Length),])
+```
+## 3 - Conditions
+```{r}
+pourboires <- c(30, 5, -15, 0, 12)
+  
+achats <- c(0, 10, 5, 0, 8)
+  
+jours <- c("lundi", "mardi", "mercredi", "jeudi", "vendredi")
+
+names(pourboires) <- jours
+names(achats) <- jours
+```
+Si tous les achats sont inférieurs à 20  afficher "Raisonnable" sinon afficher "Dépensier"
+```{r}
+if(all(achats<20)) {
+  print("Raisonnable")
+} else 
+  print("Dépensier")
+
+if(any(achats>=20)) {
+  print("Dépensier")
+} else 
+  print("Raisonnable")
+```
+Afficher "Raisonnable" ou "Dépensier" pour chaque jour
+```{r}
+print(
+  ifelse(
+    achats<20, 
+    paste("Raisonnable", seq_along(achats)),
+    "Dépensier"))
+```
+Afficher "Econome" pour les jours où il y a des pourboire et pas d'achat, "NA" sinon
+```{r}
+ifelse( achats == 0 & pourboires != 0, "Econome", "NA")
+```
+Afficher "Econome" si la somme des achats est inférieure à 25 et celle des pourboires est supérieure à 30, "NA" sinon
+```{r}
+if( sum(achats) < 25 && sum(pourboires) > 20) 
+  "Econome"
+ifelse( sum(achats) < 25 & sum(pourboires) > 20, "Econome", "NA")
+```
+## 4 - Boucles
+En utilisant une boucle `for`, afficher "Econome" pour les jours où il y a des pourboire et pas d'achat, "NA" sinon
+```{r}
+for(j in 1:5)
+  if( achats[j] == 0 && pourboires[j] != 0) {
+    print( "Econome")
+  } else {
+    print("NA")
+  }
+```
+## 5 - Fonctions
+En utilisant `lapply`, afficher "Econome" pour les jours où il y a des pourboire et pas d'achat, "NA" sinon
+```{r}
+EconomeOuNA <- function(jour_j){
+    if( achats[jour_j] == 0 && pourboires[jour_j] != 0) {
+      return( "Econome")
+    } else {
+      return("NA")
+    }
+}
+EconomeOuNA("mardi")
+lapply( seq_along(jours),EconomeOuNA )
+sapply( jours, EconomeOuNA )
+sapply( jours, FUN = function(jour_j){
+    if( achats[jour_j] == 0 && pourboires[jour_j] != 0) {
+      return( "Econome")
+    } else {
+      return("NA")
+    }
+} )
+
+```
+## 6 - CSV
+```{r}
+donnees <- read.csv("responses.csv", header = TRUE, sep = ",", na.strings = "")
+```
+Réécrire le filtre sur les “female” sans le `which()`
+```{r}
+head(donnees[ donnees$Gender == "female", 1:6])
+```
+
+Réécrire le filtre sur les “female”  âgées de “Moins de 20 ans” sans le `which()`
+```{r}
+head(donnees[ donnees$Gender == "female" & donnees$Age < 20, 1:6])
+my_which <- function(x){
+  res <- seq_along(x)
+  res[x==TRUE]
+}
+my_which(c(TRUE,FALSE,TRUE))
+
+x <- c(TRUE,FALSE,TRUE)
+res <- seq_along(x)
+df <- data.frame(res,x)
+res[x]
+df[df$x,"res"]
+```
+Ecrire la fonction `my_which()` qui retourne le même résultat que `which()`
+```{r}
+my_which <- function(x){
+  y <- seq_along(x)[x]
+  #< <- y[complete.cases(y)]
+  y
+}
+```
+```{r echo = TRUE}
+which(c(TRUE, FALSE, TRUE))
+my_which(c(TRUE, FALSE, TRUE))
+```
+## 8 - Variable catégorielle
+```{r}
+Genre <- donnees$Gender
+```
+
+Existe-t'il existe un lien statistique entre le fait d'aimer les films d'action et le genre?
+```{r}
+Action <- ifelse(is.na(donnees$Action), NA,
+                 ifelse(donnees$Action > 3, "Oui", "Non"))
+tab <-table(Genre, Action)
+tab
+chisq.test(tab)$p.value
+```
+
+Utiliser `sapply()` pour obtenir les variables ayant un for lien statistique avec le genre 
+```{r}
+res <- sapply(donnees, 
+       FUN = function(x){
+          tab <-table(Genre,
+                      ifelse(is.na(x), NA,
+                             ifelse(x > 3, "Oui", "Non")))
+          resultat <- chisq.test(tab)
+          resultat$p.value
+        })
+head(res[order(res)], 12)
+
+Cars <-ifelse(is.na(donnees$Cars ), NA,
+              ifelse(donnees$Cars  > 3, "Oui", "Non"))
+tab <-table(Genre,Cars)
+tab
+chisq.test(tab)$p.value
+```
+
