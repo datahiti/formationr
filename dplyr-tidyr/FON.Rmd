@@ -65,7 +65,7 @@ plot( fon_annee$Annee, fon_annee$Montant, type = "l")
 
 ```{r}
 fon_annee %>%
-  ggplot( aes( x = Annee, y = Montant) ) +
-  geom_line() + 
+  ggplot( ) +
+  geom_line( aes( x = Annee, y = Montant)) + 
   labs( title = "Evolution de la taxe foncière depuis 2012 en Polynésie française")
 ```
