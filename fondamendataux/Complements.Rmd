@@ -19,7 +19,7 @@ Ajouter un booléen à un entier
 ```{r}
 (mon_booleen  <- TRUE)
 mon_booleen + TRUE 
-mon_nombre + mon_booleen
+mon_entier + mon_booleen
 ```
 
 Autre notation de puissance
@@ -62,10 +62,10 @@ mon_texte + " R"
 
 ```{r}
 paste(mon_texte, "R")
-paste("mon_nombre =", mon_nombre)
-paste("mon_nombre", mon_nombre, sep = " = ")
-paste("mon_nombre = ", mon_nombre, sep = "")
-paste0("mon_nombre = ", mon_nombre)
+paste("mon_nombre =", mon_entier)
+paste("mon_nombre", mon_entier, sep = " = ")
+paste("mon_nombre = ", mon_entier, sep = "")
+paste0("mon_nombre = ", mon_entier)
 ```
 
 Simple ou double quote
@@ -259,9 +259,18 @@ head( iris[sup5, ] )
 
 Tables de correspondance avec un vecteur nommé
 ```{r}
-SeriesLUT <- c("Iris ser. Tripetalae", "Iris ser. Laevigatae", "Iris ser. Laevigatae")
-setNames(SeriesLUT, c("setosa", "versicolor", "virginica" ))
-SeriesLUT[iris$Species]
+SeriesLUT <- c(
+  setosa = "Iris ser. Tripetalae", 
+  versicolor = "Iris ser. Laevigatae", 
+  virginica = "Iris ser. Laevigatae")
+table( SeriesLUT[ as.character(iris$Species) ] )
+
+SeriesLUT2 <- c(
+  "Iris ser. Tripetalae", 
+  "Iris ser. Laevigatae", 
+  "Iris ser. Laevigatae")
+SeriesLUT2 <- setNames(SeriesLUT2, c("setosa", "versicolor", "virginica" ))
+table( SeriesLUT2[ as.character(iris$Species) ] )
 ```
 
 Tables de correspondance avec un data.frame

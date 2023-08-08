@@ -1,7 +1,7 @@
 ---
 title: "Exercices"
 author: "Hubert LEVIEL"
-date: "20/06/2022"
+date: "09/08/2023"
 output: pdf_document
 ---
 
@@ -78,7 +78,7 @@ Créer un vecteur w valant 2 fois v
 (w <- v + v)
 ```
 
-Soustraire w à v2
+Soustraire w de v2
 
 ```{r}
 (v2 - w)
@@ -102,7 +102,7 @@ Calculer la somme des carrés des 10 premiers entiers
 sum( v2 )
 ```
 
-Calculer la racive carrée de v2
+Calculer la racine carrée de v2
 
 ```{r}
 (v1 <- sqrt( v2 ))
@@ -295,7 +295,7 @@ tab
 chisq.test(tab)$p.value
 ```
 
-Utiliser `sapply()` pour obtenir les variables ayant un for lien statistique avec le genre 
+Utiliser `sapply()` pour obtenir les variables ayant un fort lien statistique avec le genre 
 ```{r}
 res <- sapply(donnees, 
        FUN = function(x){
