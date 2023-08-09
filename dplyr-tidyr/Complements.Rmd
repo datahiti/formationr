@@ -1,0 +1,50 @@
+---
+title: "Compléments"
+output:
+  html_document:
+    df_print: paged
+---
+
+Afficher les 10 premieres lignes de `iris`
+```{r}
+iris %>% 
+  head(10)
+```
+Arrondi Sepal.Length, Sepal.Width 
+```{r}
+iris %>%
+  mutate(across(c(Sepal.Length, Sepal.Width), round)) %>% 
+  head(10)
+```
+Arrondi 2 premieres colonnes
+```{r}
+iris %>%
+  mutate(across(c(1, 2), round)) %>% 
+  head(10)
+
+```
+Arrondir les colonnes numériques
+```{r}
+iris %>%
+  mutate(across(where(is.numeric) , round)) %>% 
+  head(10)
+```
+
+Calculer les moyenes et ecart types pour les colonnes numériques par espèces
+```{r}
+iris %>% 
+  group_by(Species) %>% 
+  summarise(
+    across(where(is.numeric), 
+           list(moyenne = mean, ecart_type = sd)))
+
+```
+Calculer les moyenes et ecart types pour les largeurs par espèces
+```{r}
+iris %>% 
+  group_by(Species) %>% 
+  summarise(
+    across(contains("width"), 
+           list(moyenne = mean, ecart_type = sd)))
+
+```
