@@ -99,7 +99,7 @@ mon_bilan
 mon_texte <- c("Hello World !", "James Bond", "sAlUt 12 AaA")
 
 lapply(mon_texte, tolower)
-
+tolower(mon_texte)
 
 
 # Application d'une fonction sélectionnant le premier élément d'un vecteur

@@ -57,7 +57,7 @@ Concaténer deux chaînes
 L'opérateur `+` ne fonctionne pas pour les chaînes
 
 ```{r}
-mon_texte + " R" 
+try( mon_texte + " R" )
 ```
 
 ```{r}
@@ -263,6 +263,8 @@ SeriesLUT <- c(
   setosa = "Iris ser. Tripetalae", 
   versicolor = "Iris ser. Laevigatae", 
   virginica = "Iris ser. Laevigatae")
+
+
 table( SeriesLUT[ as.character(iris$Species) ] )
 
 SeriesLUT2 <- c(
@@ -295,10 +297,12 @@ names(achats) <- jours
 ```
 Le `if` n'est pas vectorisé, il ne teste qu'une condition
 ```{r}
-if(pourboires < 0) {
-  print("Erreur")
-} else 
-  print("OK")
+try(
+  if(pourboires < 0) {
+    print("Erreur")
+  } else 
+    print("OK")
+)
 ```
 
 On peut agréger les conditions avec `all()` et `any()`

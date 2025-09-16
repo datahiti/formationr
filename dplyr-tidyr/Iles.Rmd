@@ -1,7 +1,7 @@
 ---
 title: "Les îles"
 author: "Hubert LEVIEL"
-date: "16/06/2022"
+date: "22/09/2025"
 output: pdf_document
 ---
 
@@ -10,16 +10,24 @@ knitr::opts_chunk$set(echo = FALSE)
 library(sf)
 library(ggplot2)
 library(dplyr)
+library(data.table)
 ```
 
 ## Récupération des données
-les shape files ont été téléchargés depuis la plateforme data.gouv.fr : https://static.data.gouv.fr/resources/limites-geographiques-administratives/20220610-202135/shapefiles.zip
+les shape files et les données RTE ont été téléchargés depuis la plateforme data.gouv.fr : 
 
-le dossier comporessé a été décompressé
+- https://static.data.gouv.fr/resources/limites-geographiques-administratives/20220610-202135/shapefiles.zip
+- https://www.data.gouv.fr/api/1/datasets/r/34184a7f-a4bf-4cf3-ac36-531388f3a6cb
 
+le dossier compressé shapefiles.zip a été décompressé
+
+```{r}
+shape_folder <- "D:/Users/datanui/Downloads/shapefiles"
+rte_folder <- "D:/Users/datanui/Downloads"
+```
 ## Lecture des données
 ```{r}
-ile <- sf::st_read("C:/Users/hlevi/Downloads/shapefiles/Ile.shp")
+ile <- sf::st_read( paste( shape_folder, "Ile.shp", sep = "/"))
 summary(ile)
 unique(ile$Sub)
 ```
@@ -29,8 +37,7 @@ unique(ile$Sub)
 ```{r }
 ile %>% ggplot() +
   geom_sf()+ 
-  ggtitle("Les îles de la Polynésie française") + 
-  coord_sf()
+  ggtitle("Les îles de la Polynésie française") 
 ```
 
 ## Les îles du vent
@@ -50,4 +57,28 @@ ile %>% filter( Sub == "Iles Sous-Le-Vent" & Indivds > 5000) %>%
   geom_sf(aes(fill = Indivds) ) + 
   geom_sf_label(aes( label = Ile), nudge_y = -0.07, nudge_x = 0.06)+ 
   ggtitle("Les îles sous le vent de plus de 5000 habitants") 
+```
+
+## Le RTE
+```{r}
+rte <- fread( paste( rte_folder, "exportrte.csv", sep = "/")) %>%
+  filter(!is.na(Rad_ETAB))
+com_rte <- rte %>% 
+  mutate(IDCom = floor(Com_ETAB/1000)) %>%
+  count(IDCom, name = "Nombre") 
+```
+## Les communes
+```{r}
+com <- sf::st_read( paste( shape_folder, "Com.shp", sep = "/")) %>%
+  left_join(com_rte, by="IDCom")
+```
+```{r }
+
+com %>% filter( Sub == "Iles Du Vent") %>%
+  ggplot() +
+  geom_sf(aes(fill = Nombre) ) +
+  coord_sf(xlim = c(-149,-150), ylim = c(-17.9,-17.4)) + 
+  scale_fill_viridis_c()+
+  ggtitle("Les Etablissements des îles du vent")
+  
 ```

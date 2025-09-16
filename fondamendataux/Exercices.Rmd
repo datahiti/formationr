@@ -1,7 +1,7 @@
 ---
 title: "Exercices"
 author: "Hubert LEVIEL"
-date: "09/08/2023"
+date: "22/09/2025"
 output: pdf_document
 ---
 
@@ -111,7 +111,7 @@ Calculer la racine carrée de v2
 Vérifier qu'elle vaut v
 
 ```{r}
-(sqrt( v2 ) == v)
+racine <- (sqrt( v2 ) )
 (all( sqrt( v2 ) == v))
 identical( sqrt( v2 ), v)
 ```
@@ -143,8 +143,8 @@ Afficher les 6 premières valeurs de la colonne `Petal.Length`
 
 ```{r}
 head( iris$Petal.Length )
-head( iris$Petal.Length )
 iris[1:6,"Petal.Length"] 
+iris$Petal.Length[1:6]
 ```
 
 Calculer la longueur maximale d'une pétale dans `iris`
@@ -171,8 +171,10 @@ Nombre d'individus ayant une pétale plus courte que la moyenne
 ```{r}
 sum( iris$Petal.Length < mean(iris$Petal.Length) )
 nrow(iris[iris$Petal.Length < mean(iris$Petal.Length),])
+which(iris$Petal.Length < mean(iris$Petal.Length))
+iris$Petal.Length[which.max(iris$Petal.Length)]
 ```
-## 3 - Conditions
+# 3 - Conditions
 ```{r}
 pourboires <- c(30, 5, -15, 0, 12)
   
@@ -203,7 +205,7 @@ print(
     paste("Raisonnable", seq_along(achats)),
     "Dépensier"))
 ```
-Afficher "Econome" pour les jours où il y a des pourboire et pas d'achat, "NA" sinon
+Afficher "Econome" pour les jours où il y a des pourboires et pas d'achat, "NA" sinon
 ```{r}
 ifelse( achats == 0 & pourboires != 0, "Econome", "NA")
 ```
@@ -226,23 +228,29 @@ for(j in 1:5)
 ## 5 - Fonctions
 En utilisant `lapply`, afficher "Econome" pour les jours où il y a des pourboire et pas d'achat, "NA" sinon
 ```{r}
-EconomeOuNA <- function(jour_j){
-    if( achats[jour_j] == 0 && pourboires[jour_j] != 0) {
+EconomeOuNA <- function(a, p){
+    if( a == 0 && p != 0) {
       return( "Econome")
     } else {
       return("NA")
     }
 }
-EconomeOuNA("mardi")
-lapply( seq_along(jours),EconomeOuNA )
-sapply( jours, EconomeOuNA )
-sapply( jours, FUN = function(jour_j){
-    if( achats[jour_j] == 0 && pourboires[jour_j] != 0) {
-      return( "Econome")
-    } else {
-      return("NA")
-    }
-} )
+EconomeOuNA(10,5)
+
+JourEconomeOuNA <- function(jour_j){
+    EconomeOuNA(achats[jour_j] , pourboires[jour_j] ) 
+}
+JourEconomeOuNA("mardi")
+JourEconomeOuNA(2)
+
+lapply( seq_along(jours),JourEconomeOuNA )
+
+sapply( jours, JourEconomeOuNA )
+
+sapply( jours, 
+        function(jour_j){
+          EconomeOuNA(achats[jour_j] , pourboires[jour_j] )
+          } )
 
 ```
 ## 6 - CSV
@@ -289,10 +297,9 @@ Genre <- donnees$Gender
 Existe-t'il existe un lien statistique entre le fait d'aimer les films d'action et le genre?
 ```{r}
 Action <- ifelse(is.na(donnees$Action), NA,
-                 ifelse(donnees$Action > 3, "Oui", "Non"))
+                   ifelse(donnees$Action > 3, "Oui", "Non"))
 tab <-table(Genre, Action)
-tab
-chisq.test(tab)$p.value
+  chisq.test(tab)$p.value
 ```
 
 Utiliser `sapply()` pour obtenir les variables ayant un fort lien statistique avec le genre 
@@ -314,3 +321,143 @@ tab
 chisq.test(tab)$p.value
 ```
 
+Afficher les 10 premieres lignes de `iris`
+```{r}
+library(dplyr)
+iris %>% 
+  head(10)
+```
+
+Afficher les 10 premieres lignes de `iris` pour l'espèce versicolor
+```{r}
+iris %>% 
+  filter(Species == "versicolor") %>%
+  head(10)
+
+head(filter(iris, 
+            Species == "versicolor"), 
+     10)
+```
+
+
+Afficher les 10 premieres lignes de `iris` pour les espèces versicolor et setosa
+```{r}
+iris %>% 
+  filter(Species == "versicolor" | Species == "setosa") %>%
+  head(10)
+```
+```{r}
+iris %>% 
+  filter(Species %in% c( "versicolor" , "setosa") ) %>%
+  head(10)
+```
+
+
+
+Afficher les 10 premieres lignes de `iris` pour l'espèces versicolor dont la longueur de pétales est inférieure ou égale à 4 cm
+```{r}
+iris %>% 
+  filter(Species == "versicolor" & Petal.Length <= 4) %>%
+  head(10)
+
+library(data.table)
+dt_iris <- as.data.table(iris) 
+head(dt_iris[Species == "versicolor" & Petal.Length <= 4,],10)
+
+```
+
+
+Afficher les 10 premieres lignes de `iris` avec uniquement les colonnes Species, Petal.Length et Sepal.Length
+```{r}
+iris %>%
+  select(Species, Petal.Length, Sepal.Length) %>% 
+  head(10)
+
+dt_iris[1:10,.(Species, Petal.Length, Sepal.Length)]
+```
+
+```{r}
+iris %>%
+  select(-c( Petal.Width, Sepal.Width)) %>% 
+  head(10)
+
+```
+
+
+Afficher les 10 premieres lignes de `iris` avec uniquement les colonnes Species, et la somme des longueur des pétales et des sépales
+```{r}
+iris_sum <- iris %>%
+  mutate(LengthSum = Petal.Length + Sepal.Length) %>%
+  select(Espece = Species, LengthSum )
+
+dt_iris[,.(Species, LengthSum = Petal.Length + Sepal.Length)]
+```
+
+Ajouter au résultat précédent la colonne Grande qui vaut Oui si la somme est supérieur à 6, Non sinon
+```{r}
+iris %>%
+  mutate(LengthSum = Petal.Length + Sepal.Length, 
+         Grande = if_else(LengthSum > 6, "Oui", "Non")) %>%
+  select(Species, LengthSum, Grande ) %>% 
+  head(10)
+
+iris_sum %>% mutate(Grande = if_else(LengthSum > 6, "Oui", "Non"))
+
+dt_iris[, .(Species, LengthSum = Petal.Length + Sepal.Length)][
+  ,.(Species, LengthSum,Grande = ifelse(LengthSum > 6, "Oui", "Non"))]
+```
+
+Calculer la longueur moyenne des pétales pour toutes les espèces de `iris`
+```{r}
+iris %>%
+  summarise(Moyenne = mean(Petal.Length))
+
+dt_iris[, .(Moyenne = mean(Petal.Length) )]
+```
+
+Calculer la longueur moyenne des pétales pour chaque espèce de `iris`
+```{r}
+iris %>%
+  group_by(Species) %>%
+  summarise(Moyenne = mean(Petal.Length))
+
+dt_iris[, .(Moyenne = mean(Petal.Length) ), by = Species]
+```
+
+Compter le nombre d'observation pour chaque espèce de `iris`
+```{r}
+iris %>%
+  group_by(Species) %>%
+  summarise(Nombre = n())
+
+iris %>%
+  count(Species)
+
+dt_iris[, .(Nonmbre = .N ), Species]
+```
+Compter le nombre d'observation de `iris` ayant une longueur de pétale supérieur à 5cm 
+```{r}
+iris %>%
+  filter(Petal.Length > 5) %>%
+  summarise(Nombre = n())
+
+iris %>%
+  filter(Petal.Length > 5) %>%
+  count()
+
+dt_iris[Petal.Length > 5, .(Nombre = .N )]
+```
+
+Compter par espèce le nombre d'observation  de `iris` ayant une longueur de pétale supérieur à 5cm 
+```{r}
+iris %>%
+  filter(Petal.Length > 5) %>%
+  group_by(Species) %>%
+  summarise(Nombre = n())
+
+iris %>%
+  filter(Petal.Length > 5) %>%
+  count(Species)
+
+dt_iris[Petal.Length > 5, .(Nonmbre = .N ), by = Species]
+```

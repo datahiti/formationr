@@ -4,7 +4,9 @@ output:
   html_document:
     df_print: paged
 ---
-
+```{r}
+library(dplyr)
+```
 Afficher les 10 premieres lignes de `iris`
 ```{r}
 iris %>% 
@@ -13,11 +15,14 @@ iris %>%
 Arrondi Sepal.Length, Sepal.Width 
 ```{r}
 iris %>%
-  mutate(across(c(Sepal.Length, Sepal.Width), round)) %>% 
+  mutate(Sepal.Length = round(Sepal.Length),
+         Sepal.Width = round(Sepal.Width)) %>% 
   head(10)
-```
-Arrondi 2 premieres colonnes
-```{r}
+
+iris %>%
+  mutate(across(c(Sepal.Length ,Sepal.Width), round)) %>% 
+  head(10)
+
 iris %>%
   mutate(across(c(1, 2), round)) %>% 
   head(10)
@@ -30,7 +35,7 @@ iris %>%
   head(10)
 ```
 
-Calculer les moyenes et ecart types pour les colonnes numériques par espèces
+Calculer les moyennes et ecart types pour les colonnes numériques par espèces
 ```{r}
 iris %>% 
   group_by(Species) %>% 
@@ -39,7 +44,7 @@ iris %>%
            list(moyenne = mean, ecart_type = sd)))
 
 ```
-Calculer les moyenes et ecart types pour les largeurs par espèces
+Calculer les moyennes et ecart types pour les largeurs par espèces
 ```{r}
 iris %>% 
   group_by(Species) %>% 

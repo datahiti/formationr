@@ -2,7 +2,8 @@
 
 ## Charger ses données
 
-donnees <- read.csv("./DATA/responses.csv", header = TRUE, sep = ",")
+donnees <- read.csv("Fichiers formation/fondamentaux/responses.csv", 
+                    header = TRUE, sep = ",", na.strings = "")
 
 is.data.frame(donnees)
 
@@ -26,7 +27,7 @@ summary(donnees)
 
 # Exemple 1a : filtre sur les “female”
   
-D <- donnees[ which(donnees$Gender == "female"), ]
+D <- donnees[ donnees$Gender == "female", ]
 dim(D)
 
 
@@ -38,3 +39,15 @@ D <- donnees[ which(donnees$Gender == "female" &
 dim(D)
 
 
+d <- donnees[ D <- donnees[ donnees$Gender == "female" & 
+                      donnees$Age < 20, ]
+dim(D)
+sum(is.na(donnees$Gender == "female" & 
+            donnees$Age < 20))
+
+, ]
+dim(d)
+
+donnees[NA,]
+donnees[which(NA),]
+summary(donnees[,"Gender"])
