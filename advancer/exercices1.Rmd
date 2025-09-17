@@ -2,7 +2,7 @@
 title: "Advanced R"
 author: "Hubert LEVIEL"
 date: "22/09/2025"
-output: ioslides_presentation
+output: pdf_document # ioslides_presentation
 ---
 
 ```{r setup, include=FALSE}
@@ -13,6 +13,8 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ```{r echo = TRUE}
 library(dplyr)
+library(webshot)
+#webshot::install_phantomjs()
 ```
 
 ## Data
@@ -25,68 +27,68 @@ data(airlines)
 ```
 
 ## A1 - select
-La première colonne de la table airports
+La première colonne de la table airports  
 ```{r}
 select(airports, 1)
 ```
 
 ## A2 - select
-La colonne name de la table airports
+La colonne name de la table airports  
 ```{r}
 select(airports, name)
 ```
 
 ## A3 - select
-Les colonnes lat, lon et alt de la table airports
+Les colonnes lat, lon et alt de la table airports  
 ```{r}
 select(airports, lat, lon, alt )
 ```
 
 
 ## A4 - select
-Toutes les colonnes de la table airports sauf les colonnes lat, lon et alt
+Toutes les colonnes de la table airports sauf les colonnes lat, lon et alt  
 ```{r}
 select(airports, -lat, -lon, -alt )
 ```
 
 ## A5 - select
-Les colonnes de la table flights dont le nom commence par "dep_"
+Les colonnes de la table flights dont le nom commence par "dep_"  
 ```{r}
 select(flights, starts_with("dep_"))
 ```
 
 ## A6 - select
-Les colonnes de la table flights dont le nom finit par "_time"
+Les colonnes de la table flights dont le nom finit par "_time"  
 ```{r}
 select(flights, ends_with("_time"))
 ```
 
 ## A7 - select
-Les colonnes de la table flights dont le nom contient "dep_"
+Les colonnes de la table flights dont le nom contient "dep_"  
 ```{r}
 select(flights, contains("dep_"))
 ```
 
 ## A8 - select
-Les colonnes de la table flights comprises entre "year" et "day"
+Les colonnes de la table flights comprises entre "year" et "day"  
 ```{r}
 select(flights, year:day)
 ```
 
 ## A9 - select
-Les colonnes lon et lat de la table airports renommées en longitude et latitude
+Les colonnes lon et lat de la table airports renommées en longitude et latitude  
 ```{r}
 select(airports, longitude = lon, latitude = lat)
 ```
 
 ## B1 - rename
-Sélectionner toutes les colonnes de la table airports en renommant latitude et longitude
+Sélectionner toutes les colonnes de la table airports en renommant latitude et longitude  
 ```{r}
 rename(airports, longitude = lon, latitude = lat)
 ```
 
 ## B2 - rename
-Créer une copie flights_fr de la table flights en renommant dep_delay en "retard départ" et arr_delay "retard arrivée" .  
+Créer une copie flights_fr de la table flights en renommant dep_delay en "retard départ" et arr_delay "retard arrivée".   
 ```{r}
 flights_fr <- rename(
     flights,
@@ -97,100 +99,96 @@ flights_fr
 ```
 
 ## B3 - rename
-Utiliser select pour n'afficher que ces deux colonnes
+Utiliser select pour n'afficher que ces deux colonnes  
 ```{r}
 select(flights_fr, "retard départ","retard arrivée")
 ```
 
 ## B4 - rename
-Idem en utilisant les back tits
+Idem en utilisant les back tits  
 ```{r}
 select(flights_fr, `retard départ`, `retard arrivée`)
 ```
 
 ## C1 - slice
-La 345e ligne de la table airports
+La 345e ligne de la table airports  
 ```{r}
 slice(airports, 345)
 ```
 
 ## C2 - slice
-Les 5 premières lignes de la table airports
-
+Les 5 premières lignes de la table airports  
 ```{r}
 slice(airports, 1:5)
 ```
 ## C3 - slice
-Les 3 dernières lignes de la table airports
-
+Les 3 dernières lignes de la table airports  
 ```{r}
 slice_tail(airports, n = 3)
 ```
 
 ## C4 - slice
-L'aéroport avec l’altitude la plus élevée 
-
+L'aéroport avec l’altitude la plus élevée  
 ```{r}
 slice_max(airports, alt)
 ```
 
 ## C5 - slice
-Les 8 vols ayant le moins de retard au départ
-
+Les 8 vols ayant le moins de retard au départ  
 ```{r}
 slice_min(flights, dep_delay, n=8)
 ```
 
 ## D1 - filter
-Les vols du mois de janvier
+Les vols du mois de janvier  
 ```{r}
 filter(flights, month == 1)
 ```
 
 ## D2 - filter
-Les vols avec un retard au départ compris entre 10 et 15 minutes
+Les vols avec un retard au départ compris entre 10 et 15 minutes  
 ```{r}
 filter(flights, dep_delay >= 10 & dep_delay <= 15)
 ```
 
 ## D3 - filter
-Idem en utilisant deux filtres
+Idem en utilisant deux filtres  
 ```{r}
 filter(flights, dep_delay >= 10, dep_delay <= 15)
 ```
 
 ## D4 - filter
-Les vols ayant une distance supérieure à la distance médiane
+Les vols ayant une distance supérieure à la distance médiane  
 ```{r}
 filter(flights, distance > median(distance))
 ```
 
 ## E1 - arrange
-Trier la table flights selon le retard au départ croissant
+Trier la table flights selon le retard au départ croissant  
 ```{r}
 arrange(flights, dep_delay)
 ``` 
 
 ## E2 - arrange
-Selon le mois, puis selon le retard au départ 
+Selon le mois, puis selon le retard au départ  
 ```{r}
 arrange(flights, month, dep_delay)
 ``` 
 
 ## E3 - arrange
-Trier la table flights selon le retard au départ décroissant
+Trier la table flights selon le retard au départ décroissant  
 ```{r}
 arrange(flights, desc(dep_delay))
 ``` 
 ## F1 - mutate
-Ajouter à la table flights une nouvelle variable duree_h avec la durée de vol en heure (air_time contient la durée de vol en minutes) puis sélectionner ces deux colonnes
+Ajouter à la table flights une nouvelle variable duree_h avec la durée de vol en heure (air_time contient la durée de vol en minutes) puis sélectionner ces deux colonnes  
 ```{r}
 flights <- mutate(flights, duree_h = air_time / 60)
 select(flights, air_time, duree_h)
 ``` 
 
 ## F2 - mutate
-En une seule instruction, ajouter à la table flights les variables duree_h, distance_km (= distance / 0.62137) et vitesse (en km/h), puis sélectionner ces colonnes
+En une seule instruction, ajouter à la table flights les variables duree_h, distance_km (= distance / 0.62137) et vitesse (en km/h), puis sélectionner ces colonnes  
 ```{r}
 flights <- mutate(
     flights,
@@ -200,8 +198,9 @@ flights <- mutate(
 )
 select(flights, air_time, duree_h, distance, distance_km, vitesse)
 ``` 
+
 ## F3- mutate
-Ajouter à la table flights la variables type_retard en fonction du retard au départ et à l'arrivée
+Ajouter à la table flights la variables type_retard en fonction du retard au départ et à l'arrivée  
 ```{r}
 flights <- mutate(
     flights,
@@ -216,7 +215,7 @@ select(flights, dep_delay, arr_delay, type_retard)
 ``` 
 
 ## G1 - Pipe %>%
-Sans utiliser le pipe, afficher par ordre croissant de retard au départ les colonnes retard au départ et retard à l'arrivée des vols ayant "LAX" pour destination
+Sans utiliser le pipe, afficher par ordre croissant de retard au départ les colonnes retard au départ et retard à l'arrivée des vols ayant "LAX" pour destination  
 ```{r}
 arrange(
   select(
@@ -226,7 +225,7 @@ arrange(
 ``` 
 
 ## G2 - Pipe %>%
-Idem en utilisant des tables temporaires
+Idem en utilisant des tables temporaires  
 ```{r}
 tmp <- filter(flights, dest == "LAX")
 tmp <- select(tmp, dep_delay, arr_delay)
@@ -234,7 +233,7 @@ arrange(tmp, dep_delay)
 ``` 
 
 ## G3 - Pipe %>%
-Idem en utilisant des pipes
+Idem en utilisant des pipes  
 ```{r}
 flights %>%
   filter(dest == "LAX") %>%
@@ -243,19 +242,19 @@ flights %>%
 ``` 
 
 ## H1 - group_by
-Afficher le premier vol de chaque mois, selon leur ordre d’apparition dans la table
+Afficher le premier vol de chaque mois, selon leur ordre d’apparition dans la table  
 ```{r}
 flights %>% group_by(month) %>% slice(1)
 ``` 
 
 ## H2 - group_by
-Sélectionner, pour chaque mois de l’année, le vol ayant eu le retard le plus important
+Sélectionner, pour chaque mois de l’année, le vol ayant eu le retard le plus important  
 ```{r}
 flights %>% group_by(month) %>% slice_max(dep_delay)
 ``` 
 
 ## H3 - group_by
-Ajouter une nouvelle colonne qui contient le retard moyen pour chaque compagnie aérienne
+Ajouter une nouvelle colonne qui contient le retard moyen pour chaque compagnie aérienne  
 ```{r}
 flights %>%
   group_by(carrier) %>%
@@ -264,7 +263,7 @@ flights %>%
 ``` 
 
 ## H4 - group_by
-Déterminer si un retard donné est "Supérieur" ou "Inférieur ou égal" au retard médian de la compagnie
+Déterminer si un retard donné est "Supérieur" ou "Inférieur ou égal" au retard médian de la compagnie  
 ```{r}
 flights %>%
   group_by(carrier) %>%
@@ -280,7 +279,7 @@ flights %>%
 ``` 
 
 ## H5 - group_by
-Sélectionner pour chaque mois les vols avec un retard au départ plus élevé que le retard moyen ce mois-ci
+Sélectionner pour chaque mois les vols avec un retard au départ plus élevé que le retard moyen ce mois-ci  
 ```{r}
 flights %>%
   group_by(month) %>%
@@ -288,7 +287,7 @@ flights %>%
 ``` 
 
 ## H6 - group_by
-Grouper les vols par mois et les trier par retard au départ décroissant
+Grouper les vols par mois et les trier par retard au départ décroissant  
 ```{r}
 flights %>%
   group_by(month) %>%
@@ -297,7 +296,7 @@ flights %>%
 
 
 ## I1 - summarise et count
-Calculer les retards moyens au départ et à l’arrivée pour l’ensemble des vols
+Calculer les retards moyens au départ et à l’arrivée pour l’ensemble des vols.  
 ```{r}
 flights %>%
   summarise(
@@ -307,7 +306,7 @@ flights %>%
 ``` 
 
 ## I2 - summarise et count
-Calculer le délai maximum, le délai minimum et le délai moyen au départ pour chaque mois
+Calculer le délai maximum, le délai minimum et le délai moyen au départ pour chaque mois.  
 ```{r}
 flights %>%
   group_by(month) %>%
@@ -319,7 +318,7 @@ flights %>%
 ``` 
 
 ## I3 - summarise et count
-Nombre ( n() )de vols par destination
+Nombre ( n() )de vols par destination.  
 ```{r}
 flights %>%
   group_by(dest) %>%
@@ -327,14 +326,14 @@ flights %>%
 ``` 
 
 ## I4 - summarise et count
-Nombre ( count() )de vols par destination
+Nombre ( count() )de vols par destination.  
 ```{r}
 flights %>%
   count(dest)
 ``` 
 
 ## I5 - summarise et count
-Calculer le retard moyen au départ pour chaque mois et pour chaque destination, et trier le résultat par retard décroissant 
+Calculer le retard moyen au départ pour chaque mois et pour chaque destination, et trier le résultat par retard décroissant .  
 ```{r}
 flights %>%
   group_by(month, dest) %>%
@@ -343,7 +342,7 @@ flights %>%
 ``` 
 
 ## I6 - summarise et count
-Compter le nombre de vols pour chaque couple aéroport de départ / aéroport d’arrivée, et trier le résultat par nombre de vols décroissant
+Compter le nombre de vols pour chaque couple aéroport de départ / aéroport d’arrivée, et trier le résultat par nombre de vols décroissant.  
 ```{r}
 flights %>%
   count(origin, dest) %>%
@@ -351,7 +350,7 @@ flights %>%
 ``` 
 
 ## I7 - summarise et count
-Déterminer le couple aéroport de départ / aéroport d’arrivée ayant le retard moyen au départ le plus élevé pour chaque mois de l’année
+Déterminer le couple aéroport de départ / aéroport d’arrivée ayant le retard moyen au départ le plus élevé pour chaque mois de l’année.  
 ```{r}
 flights %>%
   group_by(month, origin, dest) %>%
@@ -361,7 +360,7 @@ flights %>%
 ``` 
 
 ## I8 - summarise et count
-Calcule le retard moyen au départ par destination et on conserve les trois retards les plus importants pour chaque mois
+Calcule le retard moyen au départ par destination et on conserve les trois retards les plus importants pour chaque mois.  
 ```{r}
 flights %>%
   group_by(month, dest) %>%
@@ -370,7 +369,7 @@ flights %>%
 ``` 
 
 ## I9 - summarise et count
-Les trois retards les plus importants pour l’ensemble des couples mois / destination
+Les trois retards les plus importants pour l’ensemble des couples mois / destination.  
 ```{r}
 flights %>%
   group_by(month, dest) %>%
@@ -381,8 +380,7 @@ flights %>%
 
 
 ## J1 - left_join
-Afficher pour chaque vol son origine, sa destination et le nom complet de la compagnie aérienne
-
+Afficher pour chaque vol son origine, sa destination et le nom complet de la compagnie aérienne.  
 ```{r}
 flights %>%
   left_join( airlines, by = "carrier") %>%
@@ -391,8 +389,7 @@ flights %>%
 
 
 ## J2 - left_join
-Afficher pour chaque vol les colonnes de date et le nom complet de l'aéroport de départ
-
+Afficher pour chaque vol les colonnes de date et le nom complet de l'aéroport de départ.  
 ```{r}
 flights %>%
   left_join( airports, by = c("origin" = "faa")) %>%
@@ -400,8 +397,7 @@ flights %>%
 ``` 
 
 ## J3 - left_join
-Afficher pour chaque vol le nom complet de l'aéroport de départ et de l'aéroport d'arrivée
-
+Afficher pour chaque vol le nom complet de l'aéroport de départ et de l'aéroport d'arrivée.  
 ```{r}
 flights %>%
   left_join( airports, by = c("dest" = "faa")) %>%
@@ -413,8 +409,7 @@ flights %>%
 
 
 ## J4 - left_join
-Afficher pour chaque vol le nom complet de l'aéroport de départ, celui de l'aéroport d'arrivée et celui de la compagbnie aérienne
-
+Afficher pour chaque vol le nom complet de l'aéroport de départ, celui de l'aéroport d'arrivée et celui de la compagbnie aérienne.  
 ```{r}
 flights %>%
   left_join( airports, by = c("dest" = "faa")) %>%
@@ -427,7 +422,7 @@ flights %>%
 ``` 
 
 ## J5 - left_join
-Carte des aéroports de destination avec le nombre de vols
+Carte des aéroports de destination avec le nombre de vols.  
 ```{r}
 library(leaflet)
 flights %>%
@@ -442,7 +437,6 @@ flights %>%
 
 
 # Exercices ggplot2
-
 ```{r echo = TRUE}
 library(ggplot2)
 ```
@@ -459,35 +453,35 @@ rp <- rp2018 %>%
 ```
 
 ## K1 - geom_histogram
-Distribution des communes de la table rp selon le pourcentage de cadres dans leur population active (variable cadres)
+Distribution des communes de la table rp selon le pourcentage de cadres dans leur population active (variable cadres).  
 ```{r message=FALSE}
 ggplot(rp) +
     geom_histogram(aes(x = cadres))
 ```
 
 ## K2 - geom_histogram
-Distribution en 10 tranches des communes de la table rp selon le pourcentage d'ouvriers 
+Distribution en 10 tranches des communes de la table rp selon le pourcentage d'ouvriers.  
 ```{r}
 ggplot(rp) +
     geom_histogram(aes(x = ouvr), bins = 10)
 ```
 
 ## K3 - geom_histogram
-Distribution en tranches de 5% des communes de la table rp selon le pourcentage d'étudiants 
+Distribution en tranches de 5% des communes de la table rp selon le pourcentage d'étudiants.  
 ```{r}
 ggplot(rp) +
     geom_histogram(aes(x = etud), binwidth = 5)
 ```
 
 ## L1 - geom_point
-Nuage de points du pourcentage de cadres en fonction du pourcentage de diplomes supérieurs (dipl_sup)
+Nuage de points du pourcentage de cadres en fonction du pourcentage de diplomes supérieurs (dipl_sup).  
 ```{r}
 ggplot(rp) +
     geom_point(aes(x = dipl_sup, y = cadres))
 ```
 
 ## L2 - geom_point
-Idem avec les paramètres couleur = "darkgreen", taille = 3 et transparence = 0.3
+Idem avec les paramètres couleur = "darkgreen", taille = 3 et transparence = 0.3.  
 ```{r}
 ggplot(rp) +
     geom_point(aes(x = dipl_sup, y = cadres),
@@ -495,34 +489,34 @@ ggplot(rp) +
 ```
 
 ## M1 - geom_boxplot
-Boite à moustache de répartition du pourcentage de maisons en fonction du département de la commune
+Boite à moustache de répartition du pourcentage de maisons en fonction du département de la commune.  
 ```{r}
 ggplot(rp) +
     geom_boxplot(aes(x = departement, y = maison))
 ```
 
 ## M2 - geom_boxplot
-Idem en faisant varier la largeur des boîtes en fonction des effectifs de la classe
+Idem en faisant varier la largeur des boîtes en fonction des effectifs de la classe.  
 ```{r}
 ggplot(rp) +
     geom_boxplot(aes(x = departement, y = maison), varwidth = TRUE)
 ```
 
 ## N1 - geom_boxplot
-Idem en utilisant des graphes en violon à la place des boîtes à moustache
+Idem en utilisant des graphes en violon à la place des boîtes à moustache.  
 ```{r}
 ggplot(rp) +
     geom_violin(aes(x = departement, y = maison))
 ```
 ## N2 - geom_boxplot
-Idem en mettant à l'échelle en fonction du nombre de commune
+Idem en mettant à l'échelle en fonction du nombre de commune.  
 ```{r}
 ggplot(rp) +
     geom_violin(aes(x = departement, y = maison), scale = "count")
 ```
 
 ## N3 - geom_boxplot
-Idem en faisant varier le niveau de “détail” de la représentation en utilisant l’argument bande passante = 2
+Idem en faisant varier le niveau de “détail” de la représentation en utilisant l’argument bande passante = 2.  
 ```{r}
 ggplot(rp) +
     geom_violin(
@@ -532,28 +526,28 @@ ggplot(rp) +
 ```
 
 ## O1 - geom_bar et geom_col
-Graphique en bâtons du nombre de communes pour chaque département
+Graphique en bâtons du nombre de communes pour chaque département.  
 ```{r}
 ggplot(rp) +
     geom_bar(aes(x = departement))
 ```
 
 ## O2 - geom_bar et geom_col
-Graphique en barres horizontales en utilisant y au lieu de x
+Graphique en barres horizontales en utilisant y au lieu de x.  
 ```{r}
 ggplot(rp) +
     geom_bar(aes(x = departement))
 ```
 
 ## O3 - geom_bar et geom_col
-Idem en utilisant y au lieu de x
+Idem en utilisant y au lieu de x.  
 ```{r}
 ggplot(rp) +
     geom_bar(aes(y = departement))
 ```
 
 ## O4 - geom_bar et geom_col
-Idem en utilisant coord_flip()
+Idem en utilisant coord_flip().  
 ```{r}
 ggplot(rp) +
     geom_bar(aes(x = departement)) +
@@ -561,7 +555,7 @@ ggplot(rp) +
 ```
 
 ## O5 - geom_bar et geom_col
-Calculer le nombre de commune par département puis afficher les résultats avec geom_col()
+Calculer le nombre de commune par département puis afficher les résultats avec geom_col().  
 ```{r}
 rp %>%
   count(departement) %>%
@@ -570,7 +564,7 @@ rp %>%
 ```
 
 ## O6 - geom_bar et geom_col
-Idem en changeant la couleur de remplissage = "darkblue" et la largeur des barres à 50%
+Idem en changeant la couleur de remplissage = "darkblue" et la largeur des barres à 50%.  
 ```{r}
 rp %>%
   count(departement) %>%
@@ -580,7 +574,7 @@ rp %>%
 ```
 
 ## P1 - geom_text et geom_label
-Nuage croisant la part des diplômés du supérieur et la part de cadres, mais en affichant le nom de la commune plutôt qu’un simple point
+Nuage croisant la part des diplômés du supérieur et la part de cadres, mais en affichant le nom de la commune plutôt qu’un simple point.  
 ```{r}
 ggplot(rp) +
     geom_text(
@@ -589,7 +583,7 @@ ggplot(rp) +
 ```
 
 ## P2 - geom_text et geom_label
-Idem en changeant les paramètres couleur = "darkred" et taille = 2
+Idem en changeant les paramètres couleur = "darkred" et taille = 2.  
 ```{r}
 ggplot(rp) +
     geom_text(
@@ -599,7 +593,7 @@ ggplot(rp) +
 ```
 
 ## P3 - geom_text et geom_label
-Idem en utilisant geom_label
+Idem en utilisant geom_label.  
 ```{r}
 ggplot(rp) +
     geom_label(
@@ -609,21 +603,21 @@ ggplot(rp) +
 ```
 
 ## Q1 - geom_density
-Densité de la répartition de la part des cadres dans les communes
+Densité de la répartition de la part des cadres dans les communes.  
 ```{r}
 ggplot(rp) +
     geom_density(aes(x = cadres))
 ```
 
 ## Q2 - geom_density
-Idem en faisant varier le niveau de “détail” de la représentation en utilisant l’argument bande passante = 2
+Idem en faisant varier le niveau de “détail” de la représentation en utilisant l’argument bande passante = 2.  
 ```{r}
 ggplot(rp) +
     geom_density(aes(x = cadres), bw = 1)
 ```
 
 ## R1 - Mappages
-Nuage de points du pourcentage de cadres en fonction du pourcentage de diplôme supérieur en colorant par département
+Nuage de points du pourcentage de cadres en fonction du pourcentage de diplôme supérieur en colorant par département.  
 ```{r}
 ggplot(rp) +
     geom_point(
@@ -632,7 +626,7 @@ ggplot(rp) +
 ```
 
 ## R2 - Mappages
-Idem avec la taille des points représentant la population totale
+Idem avec la taille des points représentant la population totale.  
 ```{r}
 ggplot(rp) +
     geom_point(
@@ -642,7 +636,7 @@ ggplot(rp) +
 ```
 
 ## R3 - Mappages
-Idem en faisant varier la transparence des points en fonction du nombre de maisons
+Idem en faisant varier la transparence des points en fonction du nombre de maisons.  
 ```{r}
 ggplot(rp) +
     geom_point(
@@ -652,14 +646,14 @@ ggplot(rp) +
 ```
 
 ## R4 - Mappages
-Graphique à barres empilées du nombre de communes par classe de population pour chaque département
+Graphique à barres empilées du nombre de communes par classe de population pour chaque département.  
 ```{r}
 ggplot(rp) +
   geom_bar(aes(x = departement, fill = pop_cl))
 ```
 
 ## R5 - Mappages
-Graphique à barres groupées du nombre de communes par classe de population pour chaque département
+Graphique à barres groupées du nombre de communes par classe de population pour chaque département.  
 ```{r}
 ggplot(rp) +
   geom_bar(aes(x = departement, fill = pop_cl),
@@ -667,7 +661,7 @@ ggplot(rp) +
 ```
 
 ## R6 - Mappages
-Graphique à barres empilées de la proportion de communes par classe de population pour chaque département
+Graphique à barres empilées de la proportion de communes par classe de population pour chaque département.  
 ```{r}
 ggplot(rp) +
   geom_bar(aes(x = departement, fill = pop_cl),
@@ -675,7 +669,7 @@ ggplot(rp) +
 ```
 
 ## R7 - Mappages
-Idem avec un graphique à barre horizontales
+Idem avec un graphique à barre horizontales.  
 ```{r}
 ggplot(rp) +
   geom_bar(aes(x = departement, fill = pop_cl),
@@ -684,7 +678,7 @@ ggplot(rp) +
 ```
 
 ## S1 - Plusieurs geom
-Boîte à moustache de la répartition du pourcentage de maisons des communes pour chaque département avec un point rouge et transparent de 20% pour chaque commune
+Boîte à moustache de la répartition du pourcentage de maisons des communes pour chaque département avec un point rouge et transparent de 20% pour chaque commune.  
 ```{r}
 ggplot(rp) +
     geom_boxplot(aes(x = departement, y = maison)) +
@@ -695,7 +689,7 @@ ggplot(rp) +
 ```
 
 ## S2 - Plusieurs geom
-Idem en utilisant geom_jitter pour limiter les superpositions
+Idem en utilisant geom_jitter pour limiter les superpositions.  
 ```{r}
 ggplot(rp) +
     geom_boxplot(aes(x = departement, y = maison)) +
@@ -706,7 +700,7 @@ ggplot(rp) +
 ```
 
 ## S3 - Plusieurs geom
-Idem en regroupant les mappages communs dans l'appel à ggplot()
+Idem en regroupant les mappages communs dans l'appel à ggplot().  
 ```{r}
 ggplot(rp,aes(x = departement, y = maison)) +
     geom_boxplot() +
@@ -714,7 +708,7 @@ ggplot(rp,aes(x = departement, y = maison)) +
 ```
 
 ## S4 - Plusieurs geom
-Nuage de points des pourcentages de cadres par pourcentage de diplômes supérieurs avec une ligne de régression linéaire en utilisant geom_smooth
+Nuage de points des pourcentages de cadres par pourcentage de diplômes supérieurs avec une ligne de régression linéaire en utilisant geom_smooth.  
 ```{r}
 ggplot(rp, aes(x = dipl_sup, y = cadres)) +
     geom_point(alpha = 0.2) +
@@ -722,7 +716,7 @@ ggplot(rp, aes(x = dipl_sup, y = cadres)) +
 ```
 
 ## S5 - Plusieurs geom
-Idem en ajoutant les courbes de densité avec geom_density2d
+Idem en ajoutant les courbes de densité avec geom_density2d.  
 ```{r}
 ggplot(rp, aes(x = dipl_sup, y = cadres)) +
     geom_point(alpha = 0.2) +
@@ -731,7 +725,7 @@ ggplot(rp, aes(x = dipl_sup, y = cadres)) +
 ```
 
 ## T1 - Plusieurs sources de données
-Idem en affichant les noms de communes de + de 50 000 habitants. (Commencer par créer un data.frame contenant uniquement ces communes)
+Idem en affichant les noms de communes de + de 50 000 habitants. (Commencer par créer un data.frame contenant uniquement ces communes).  
 ```{r}
 com50 <- filter(rp, pop_tot >= 50000)
 
@@ -744,7 +738,7 @@ ggplot(data = rp, aes(x = dipl_sup, y = cadres)) +
 ```
 
 ## U1 - Le faceting
-Faire un histogramme de la distribution des pourcentages de cadres pour chacun des départements et les afficher avec facet_wrap
+Faire un histogramme de la distribution des pourcentages de cadres pour chacun des départements et les afficher avec facet_wrap.  
 ```{r}
 ggplot(data = rp) +
     geom_histogram(aes(x = cadres), bins = 30) +
@@ -752,7 +746,7 @@ ggplot(data = rp) +
 ```
 
 ## U2 - Le faceting
-Idem avec un affichage en lignes
+Idem avec un affichage en lignes.  
 ```{r}
 ggplot(data = rp) +
     geom_histogram(aes(x = cadres), bins = 30) +
@@ -760,7 +754,7 @@ ggplot(data = rp) +
 ```
 
 ## U3 - Le faceting
-Idem en ajoutant des colonnes pour les classes de population
+Idem en ajoutant des colonnes pour les classes de population.  
 ```{r}
 ggplot(data = rp) +
     geom_histogram(aes(x = cadres), bins = 30) +
@@ -771,7 +765,7 @@ ggplot(data = rp) +
 ```
 
 ## V1 - scale_size
-Nuage de points des pourcentages de cadres en fonction des pourcentages de diplômes supérieurs en répartissant la taille des points entre 0 et 20
+Nuage de points des pourcentages de cadres en fonction des pourcentages de diplômes supérieurs en répartissant la taille des points entre 0 et 20.  
 ```{r}
 ggplot(rp) +
     geom_point(aes(x = dipl_sup, y = cadres, size = pop_tot)) +
@@ -779,7 +773,7 @@ ggplot(rp) +
 ```
 
 ## V2 - scale_size
-Idem en répartissant la taille des points entre 0 et 15 et en renommant la légende "Population"
+Idem en répartissant la taille des points entre 0 et 15 et en renommant la légende "Population".  
 ```{r}
 ggplot(rp) +
     geom_point(aes(x = dipl_sup, y = cadres, size = pop_tot)) +
@@ -790,7 +784,7 @@ ggplot(rp) +
 ```
 
 ## V3 - scale_size
-Idem en spécifiant les valeurs à représenter dans la légende
+Idem en spécifiant les valeurs à représenter dans la légende.  
 ```{r}
 ggplot(rp) +
     geom_point(aes(x = dipl_sup, y = cadres, size = pop_tot)) +
@@ -802,7 +796,7 @@ ggplot(rp) +
 ```
 
 ## W1 - scale_x, scale_y
-Nuage de points des pourcentages de cadres en fonction des pourcentages de diplômes supérieurs en étendant les axes jusqu'à 100%
+Nuage de points des pourcentages de cadres en fonction des pourcentages de diplômes supérieurs en étendant les axes jusqu'à 100%  
 ```{r}
 ggplot(rp) +
     geom_point(aes(x = dipl_sup, y = cadres)) +
@@ -811,7 +805,7 @@ ggplot(rp) +
 ```
 
 ## W2 - scale_x, scale_y
-Idem en renommant les axes
+Idem en renommant les axes  
 ```{r}
 ggplot(rp) +
     geom_point(aes(x = dipl_sup, y = cadres)) +
@@ -822,7 +816,7 @@ ggplot(rp) +
 ```
 
 ## W3 - scale_x, scale_y
-Idem en appliquant une échelle logarithmique sur les diplômes
+Idem en appliquant une échelle logarithmique sur les diplômes.  
 ```{r}
 ggplot(rp) +
     geom_point(aes(x = dipl_sup, y = cadres)) +
@@ -830,7 +824,7 @@ ggplot(rp) +
 ```
 
 ## W4 - scale_x, scale_y
-Nombre de commune de chaque département en renommant l'axe de x "Département"
+Nombre de commune de chaque département en renommant l'axe de x "Département".  
 ```{r}
 ggplot(rp) +
     geom_bar(aes(x = departement)) +
@@ -838,7 +832,7 @@ ggplot(rp) +
 ```
 
 ## W5 - scale_x, scale_y
-Idem en limitant aux départements "Oise", "Lozère" et "Rhône"
+Idem en limitant aux départements "Oise", "Lozère" et "Rhône".  
 ```{r warning=FALSE}
   ggplot(rp) +
     geom_bar(aes(x = departement)) +
@@ -847,14 +841,15 @@ Idem en limitant aux départements "Oise", "Lozère" et "Rhône"
 ```
 
 ## X1 - scale_color, scale_fill
-Nuage de points des pourcentages de cadres en fonction des pourcentages de diplômes supérieurs en colorant les points part la part de chômeurs
+Nuage de points des pourcentages de cadres en fonction des pourcentages de diplômes supérieurs en colorant les points part la part de chômeurs.  
+  
 ```{r}
 ggplot(rp) +
     geom_point(aes(x = dipl_sup, y = cadres, color = chom))
 ```
 
 ## X2 - scale_color, scale_fill
-Idem en spécifiant un gradient de blanc à rouge
+Idem en spécifiant un gradient de blanc à rouge.  
 ```{r}
 ggplot(rp) +
     geom_point(aes(x = dipl_sup, y = cadres, color = chom)) +
@@ -862,7 +857,7 @@ ggplot(rp) +
 ```
 
 ## X3 - scale_color, scale_fill
-Idem en spécifiant la palette plasma de l'échelle de couleur viridis
+Idem en spécifiant la palette plasma de l'échelle de couleur viridis.  
 ```{r}
 ggplot(rp) +
     geom_point(aes(x = dipl_sup, y = cadres, color = chom)) +
@@ -870,7 +865,7 @@ ggplot(rp) +
 ```
 
 ## X4 - scale_color, scale_fill
-Idem en colorant cette fois par département avec la palette manuelle : "red", "#FFDD45", rgb(0.1, 0.2, 0.6), "darkgreen" et "grey80"
+Idem en colorant cette fois par département avec la palette manuelle : "red", "#FFDD45", rgb(0.1, 0.2, 0.6), "darkgreen" et "grey80".  
 ```{r}
 ggplot(rp) +
     geom_point(aes(x = dipl_sup, y = cadres, color = departement)) +
@@ -881,29 +876,29 @@ ggplot(rp) +
     )
 ```
 
-## X4 - scale_color, scale_fill
-Idem en utilisant la palette "Set1" de scale_color_brewer
+## X5 - scale_color, scale_fill
+Idem en utilisant la palette "Set1" de scale_color_brewer.  
 ```{r}
 ggplot(rp) +
     geom_point(aes(x = dipl_sup, y = cadres, color = departement)) +
     scale_color_brewer("Département", palette = "Set1")
 ```
 
-## Data avec des séries temporelles
+## Data avec des séries temporelles.  
 ```{r}
 data("economics")
 economics
 ```
 
 ## Y1 - geom_line
-Evolution dans le temps du nombre de chômeurs aux États-Unis 
+Evolution dans le temps du nombre de chômeurs aux États-Unis.  
 ```{r}
 ggplot(economics) +
     geom_line(aes(x = date, y = unemploy))
 ```
 
 ## Z1 - Thèmes
-Idem en utilisant le thème noir et blanc
+Idem en utilisant le thème noir et blanc.  
 ```{r}
 ggplot(economics) +
     geom_line(aes(x = date, y = unemploy))+
@@ -911,7 +906,7 @@ ggplot(economics) +
 ```
 
 ## Z2 - Thèmes
-Idem en utilisant le thème minimal
+Idem en utilisant le thème minimal.  
 ```{r}
 ggplot(economics) +
     geom_line(aes(x = date, y = unemploy))+
@@ -919,7 +914,7 @@ ggplot(economics) +
 ```
 
 ## Z3 - Thèmes
-Idem en donnant un titre au graphique, en renommant l'axe des y et supprimant le titre de l'axe des x
+Idem en donnant un titre au graphique, en renommant l'axe des y et supprimant le titre de l'axe des x.  
 ```{r}
 ggplot(economics) +
     geom_line(aes(x = date, y = unemploy)) +
